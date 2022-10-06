@@ -1,45 +1,63 @@
-use egui::{Ui, Response};
+use egui::{Ui, Response, Context, Id};
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
     eframe::run_native("Swan", native_options, Box::new(|cc| Box::new(SwanApp::new(cc))));
 }
 
-#[derive(Default)]
 struct SwanApp {
-    testVar: i64
+    counter: u64,
 }
+
+impl Default for SwanApp {
+    fn default() -> SwanApp {
+        SwanApp{ counter: 0 }
+    }
+}
+
 
 impl SwanApp {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        return SwanApp{ testVar: 216 };
+        return SwanApp::default();
     }
+}
+
+enum TestResp {
+    None,
+    Clicked
 }
 
 impl eframe::App for SwanApp {
    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-       egui::CentralPanel::default().show(ctx, |ui| {
-            for n in 1..10 {
-                let test_widget = TestWidget::default();
-                ui.heading(n.to_string());
-                ui.add(test_widget);
-            }
 
+       egui::Window::new("Hello world").show(ctx, |ui| {
+            let resp = ui.add(TestWidget{ counter: self.counter });
+            if resp.clicked(){
+                println!("Cliiicked!");
+                self.counter += 1;
+            }
        });
    }
 }
 
 struct TestWidget {
-    counter: u64
+    counter: u64,
 }
 
 impl Default for TestWidget {
     fn default() -> TestWidget {
-        TestWidget{ counter: 0 }
+        return TestWidget{ counter: 0};
+    }
+}
+
+impl TestWidget {
+    fn print_counter(self) {
+        println!("{}", self.counter);
     }
 }
 
 impl egui::Widget for TestWidget {
+
     fn ui(self, ui: &mut Ui) -> Response {
 
         let size = egui::Vec2{ x: 100.0, y: 100.0 };
@@ -47,13 +65,13 @@ impl egui::Widget for TestWidget {
         let (rect, response) = ui.allocate_exact_size(size, egui::Sense::click_and_drag());
 
         if response.clicked() {
-            println!("Beep! You clicked me.");
+            self.print_counter();
         } else if response.hovered() {
-            println!("You're hovering over meee!");
+            //println!("You're hovering over meee!");
         } else if response.dragged() {
             println!("I can't move! :O");
         }
 
-        return ui.heading("beepy")
+        return response;
     }
 }
