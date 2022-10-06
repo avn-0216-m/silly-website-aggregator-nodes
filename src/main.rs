@@ -1,4 +1,4 @@
-use eframe::egui;
+use egui::{Ui, Response};
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
@@ -22,8 +22,7 @@ impl eframe::App for SwanApp {
             for n in 1..10 {
                 let test_widget = TestWidget::default();
                 ui.heading(n.to_string());
-                let w_response: egui::Response = ui.add(test_widget);
-                println!("{}", w_response.hovered);
+                ui.add(test_widget);
             }
 
        });
@@ -36,12 +35,25 @@ struct TestWidget {
 
 impl Default for TestWidget {
     fn default() -> TestWidget {
-        TestWidget{ counter: 0}
+        TestWidget{ counter: 0 }
     }
 }
 
 impl egui::Widget for TestWidget {
-    fn ui(self, ui: &mut egui::Ui) -> egui::Response {
+    fn ui(self, ui: &mut Ui) -> Response {
+
+        let size = egui::Vec2{ x: 100.0, y: 100.0 };
+
+        let (rect, response) = ui.allocate_exact_size(size, egui::Sense::click_and_drag());
+
+        if response.clicked() {
+            println!("Beep! You clicked me.");
+        } else if response.hovered() {
+            println!("You're hovering over meee!");
+        } else if response.dragged() {
+            println!("I can't move! :O");
+        }
+
         return ui.heading("beepy")
     }
 }
