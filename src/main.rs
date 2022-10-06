@@ -51,7 +51,7 @@ impl Default for TestWidget {
 }
 
 impl TestWidget {
-    fn print_counter(self) {
+    fn print_counter(&self) {
         println!("{}", self.counter);
     }
 }
@@ -71,6 +71,8 @@ impl egui::Widget for TestWidget {
         } else if response.dragged() {
             println!("I can't move! :O");
         }
+
+        ui.label(self.counter.to_string());
 
         return response;
     }
